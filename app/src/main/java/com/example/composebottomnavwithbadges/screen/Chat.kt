@@ -16,24 +16,24 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 @Composable
-fun HomeScreen(
-    viewModel: HomeViewModel = viewModel()
+fun ChatScreen(
+    viewModel: ChatViewModel = viewModel()
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "HomeScreen")
+        Text(text = "ChatScreen")
         viewModel.getList()
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(20.dp)
+                .height(50.dp)
         )
         LazyColumn(
             modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(top = 8.dp,bottom = 50.dp)
+            contentPadding = PaddingValues(top = 8.dp)
         ) {
             items(items = viewModel.listResponse) { item ->
                 Text(
@@ -43,15 +43,5 @@ fun HomeScreen(
                 )
             }
         }
-
-        /*Text(text = viewModel.valResponse.toString())
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-        )
-        Button(onClick = { viewModel.updateVal() }) {
-            Text(text = "Update Val")
-        }*/
     }
 }

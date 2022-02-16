@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class HomeViewModel: ViewModel() {
+class SettingViewModel: ViewModel() {
     var valResponse:Int by mutableStateOf(0)
     var listResponse:List<String> by mutableStateOf(listOf())
 

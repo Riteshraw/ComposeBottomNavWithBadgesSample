@@ -26,7 +26,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.composebottomnavwithbadges.screen.ChatScreen
 import com.example.composebottomnavwithbadges.screen.HomeScreen
+import com.example.composebottomnavwithbadges.screen.SettingScreen
 import com.example.composebottomnavwithbadges.ui.theme.ComposeBottomNavWithBadgesTheme
 
 class MainActivity : ComponentActivity() {
@@ -41,7 +43,19 @@ class MainActivity : ComponentActivity() {
                             items = itemList,
                             navController = navController,
                             onItemClick = {
-                                navController.navigate(it.route)
+                                navController.navigate(it.route) {
+                                    // Pop up to the start destination of the graph to
+                                    // avoid building up a large stack of destinations
+                                    // on the back stack as users select items
+                                    popUpTo(navController.graph.findStartDestination().id) {
+                                        saveState = true
+                                    }
+                                    // Avoid multiple copies of the same destination when
+                                    // reselecting the same item
+                                    launchSingleTop = true
+                                    // Restore state when reselecting a previously selected item
+                                    restoreState = true
+                                }
                             }
                         )
                     }) {
@@ -118,36 +132,6 @@ fun BottomNavigationBar(
                 }
             )
         }
-    }
-}
-
-/*@Composable
-fun HomeScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Home Screen")
-    }
-}*/
-
-@Composable
-fun ChatScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Chat Screen")
-    }
-}
-
-@Composable
-fun SettingScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Setting Screen")
     }
 }
 
