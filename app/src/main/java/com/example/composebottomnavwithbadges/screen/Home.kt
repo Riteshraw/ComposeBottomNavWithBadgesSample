@@ -25,7 +25,7 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = "HomeScreen")
-        viewModel.getList()
+        //viewModel.getList()
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()

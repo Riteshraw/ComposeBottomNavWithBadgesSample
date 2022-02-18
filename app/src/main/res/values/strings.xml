@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ComposeBottomNavWithBadges</string>
+    <string name="menu_item_contact">Contact</string>
 </resources>

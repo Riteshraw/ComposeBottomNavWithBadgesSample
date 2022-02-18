@@ -1,5 +1,6 @@
 package com.example.composebottomnavwithbadges.screen
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -9,11 +10,16 @@ class HomeViewModel: ViewModel() {
     var valResponse:Int by mutableStateOf(0)
     var listResponse:List<String> by mutableStateOf(listOf())
 
+    init {
+        getList()
+    }
+
     fun updateVal(){
         valResponse += 1
     }
 
     fun getList(){
+        Log.i("Compose","gettinglist")
         listResponse = listOf(
             "Android 20",
             "Android 21",

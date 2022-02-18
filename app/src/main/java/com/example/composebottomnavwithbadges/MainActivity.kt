@@ -4,17 +4,20 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,14 +25,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.composebottomnavwithbadges.screen.ChatScreen
-import com.example.composebottomnavwithbadges.screen.HomeScreen
-import com.example.composebottomnavwithbadges.screen.SettingScreen
+import androidx.navigation.navArgument
+import com.example.composebottomnavwithbadges.screen.*
 import com.example.composebottomnavwithbadges.ui.theme.ComposeBottomNavWithBadgesTheme
+import com.example.composebottomnavwithbadges.utils.MenuAction
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,47 +42,83 @@ class MainActivity : ComponentActivity() {
             ComposeBottomNavWithBadgesTheme {
                 val navController = rememberNavController()
                 Scaffold(
+                    topBar = {
+                        //TopAppBarWidget(navController)
+                        if (currentRoute(navController) != "Profile" /*||
+                            currentRoute(navController) != "More/{selectedItem}TopAppBarWidget"*/
+                        ) {
+                            TopAppBarWidget(navController)
+                        }
+                    },
                     bottomBar = {
-                        BottomNavigationBar(
-                            items = itemList,
-                            navController = navController,
-                            onItemClick = {
-                                navController.navigate(it.route) {
-                                    // Pop up to the start destination of the graph to
-                                    // avoid building up a large stack of destinations
-                                    // on the back stack as users select items
-                                    popUpTo(navController.graph.findStartDestination().id) {
-                                        saveState = true
-                                    }
-                                    // Avoid multiple copies of the same destination when
-                                    // reselecting the same item
-                                    launchSingleTop = true
-                                    // Restore state when reselecting a previously selected item
-                                    restoreState = true
+                        if (currentRoute(navController) != "Profile" /*||
+                            currentRoute(navController) != "More/{selectedItem}BottomNavigationBar"*/
+                        ) {
+                            BottomNavigationBar(
+                                items = itemList,
+                                navController = navController,
+                                onItemClick = {
+                                    navigateToDestination(navController, it.route)
                                 }
-                            }
-                        )
+                            )
+                        }
                     }) {
-                    Navigation(navController = navController)
+                    Navigation(navController = navController, paddingValues = it)
                 }
             }
+        }
+    }
+
+}
+
+@Composable
+fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
+    NavHost(
+        navController = navController,
+        startDestination = "Home",
+        Modifier.padding(paddingValues)
+    ) {
+        composable(route = "Home") {
+            HomeScreen()
+        }
+        composable(route = "Chat") {
+            ChatScreen()
+        }
+        composable(route = "Setting") {
+            SettingScreen(navController)
+        }
+        composable(route = "Profile") {
+            ProfileScreen(navController)
+        }
+        composable(route = "More/{selectedItem}") {
+            val item = it.arguments?.getString("selectedItem").toString()
+            MoreSettingScreen(item, navController)
         }
     }
 }
 
 @Composable
-fun Navigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = "home") {
-        composable(route = "home") {
-            HomeScreen()
+private fun TopAppBarWidget(navController: NavHostController) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    TopAppBar(
+        title = { Text(text = navBackStackEntry?.destination?.route.toString()/*"TopAppBar Title"*/) },
+        navigationIcon = {
+            IconButton(onClick = { navigateToDestination(navController, "Profile") }) {
+                Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile Icon")
+            }
+        },
+        backgroundColor = colorResource(id = R.color.purple_200),
+        contentColor = Color.White,
+        elevation = 12.dp,
+        actions = {
+            IconButton(onClick = { /*navigateToDestination(navController, "profile") */ }) {
+                Icon(
+                    painter = painterResource(id = MenuAction.Contact.icon),
+                    contentDescription = MenuAction.Contact.label.toString()
+                )
+            }
         }
-        composable(route = "chat") {
-            ChatScreen()
-        }
-        composable(route = "setting") {
-            SettingScreen()
-        }
-    }
+    )
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -133,6 +173,29 @@ fun BottomNavigationBar(
             )
         }
     }
+}
+
+fun navigateToDestination(navController: NavHostController, destination: String) {
+    navController.navigate(destination) {
+        // Pop up to the start destination of the graph to
+        // avoid building up a large stack of destinations
+        // on the back stack as users select items
+        popUpTo(navController.graph.findStartDestination().id) {
+            saveState = true
+        }
+        // Avoid multiple copies of the same destination when
+        // reselecting the same item
+        launchSingleTop = true
+        // Restore state when reselecting a previously selected item
+        restoreState = true
+    }
+}
+
+@Composable
+fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    //navController.graph.displayName
+    return navBackStackEntry?.destination?.route
 }
 
 @Composable

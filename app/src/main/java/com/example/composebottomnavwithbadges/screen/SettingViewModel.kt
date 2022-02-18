@@ -9,11 +9,15 @@ class SettingViewModel: ViewModel() {
     var valResponse:Int by mutableStateOf(0)
     var listResponse:List<String> by mutableStateOf(listOf())
 
+    init {
+        getList()
+    }
+
     fun updateVal(){
         valResponse += 1
     }
 
-    fun getList(){
+    private fun getList(){
         listResponse = listOf(
             "Android 20",
             "Android 21",
