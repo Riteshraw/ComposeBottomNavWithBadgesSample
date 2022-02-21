@@ -44,7 +44,7 @@ fun SettingScreen(
                 listItem(item = item) { selectedItem ->
                     Toast.makeText(context, "Item clicked : $selectedItem", Toast.LENGTH_SHORT)
                         .show()
-                    navController.navigate("More/{$selectedItem}")
+                    navController.navigate("more/$selectedItem")
                 }
             }
         }

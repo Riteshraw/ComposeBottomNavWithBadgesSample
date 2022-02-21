@@ -1,19 +1,38 @@
 package com.example.composebottomnavwithbadges.screen
 
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class ChatViewModel: ViewModel() {
-    var valResponse:Int by mutableStateOf(0)
-    var listResponse:List<String> by mutableStateOf(listOf())
+class ChatViewModel : ViewModel() {
+    var valResponse: Int by mutableStateOf(0)
+    var listResponse: List<String> by mutableStateOf(listOf())
 
-    fun updateVal(){
+    //lateinit var listState: LazyListState
+    var firstItemIndex: Int? = null
+    var firstItemScrollOffset: Int? = null
+
+    init {
+        getList()
+    }
+
+    fun updateVal() {
         valResponse += 1
     }
 
-    fun getList(){
+    /*fun isListStateInitialised(): Boolean {
+        return this::firstItemIndex.isNot
+    }*/
+
+    fun saveState(firstVisibleItemIndex: Int, firstVisibleItemScrollOffset: Int) {
+        //this.listState = LazyListState(firstVisibleItemIndex, firstVisibleItemScrollOffset)
+        firstItemIndex = firstVisibleItemIndex
+        firstItemScrollOffset = firstVisibleItemScrollOffset
+    }
+
+    fun getList() {
         listResponse = listOf(
             "Android 20",
             "Android 21",

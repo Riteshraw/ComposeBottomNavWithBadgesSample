@@ -16,5 +16,5 @@ data class BottomNavItem(
 val itemList = listOf<BottomNavItem>(
     BottomNavItem("Home", "home", Icons.Default.Home),
     BottomNavItem("Chat", "chat", Icons.Default.Notifications, 12),
-    BottomNavItem("Setting", "setting", Icons.Default.Settings)
+    BottomNavItem("Setting", "setting", Icons.Default.Settings),
 )

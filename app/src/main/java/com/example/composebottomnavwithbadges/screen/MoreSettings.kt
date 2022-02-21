@@ -23,7 +23,7 @@ fun MoreSettingScreen(item:String,navController: NavHostController) {
         Text(text = "More Setting Screen")
         //display argument text
         Text(
-            text = "Argument passed : $item",
+            text = "Argument received : $item",
             Modifier
                 .weight(1F)
                 .background(Color.Cyan)

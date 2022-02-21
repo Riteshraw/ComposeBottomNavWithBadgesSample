@@ -41,30 +41,33 @@ class MainActivity : ComponentActivity() {
         setContent {
             ComposeBottomNavWithBadgesTheme {
                 val navController = rememberNavController()
-                Scaffold(
-                    topBar = {
-                        //TopAppBarWidget(navController)
-                        if (currentRoute(navController) != "Profile" /*||
-                            currentRoute(navController) != "More/{selectedItem}TopAppBarWidget"*/
-                        ) {
-                            TopAppBarWidget(navController)
-                        }
-                    },
-                    bottomBar = {
-                        if (currentRoute(navController) != "Profile" /*||
-                            currentRoute(navController) != "More/{selectedItem}BottomNavigationBar"*/
-                        ) {
-                            BottomNavigationBar(
-                                items = itemList,
-                                navController = navController,
-                                onItemClick = {
-                                    navigateToDestination(navController, it.route)
-                                }
-                            )
-                        }
-                    }) {
-                    Navigation(navController = navController, paddingValues = it)
-                }
+                val a = 1
+                val b = 2
+                val result = if(a == 1 || a== 2)  b else a
+                    Scaffold(
+                        topBar = {
+                            //TopAppBarWidget(navController)
+                            if (currentRoute(navController) != "profile" /*||
+                            currentRoute(navController) != "More/{selectedItem}"*/
+                            ) {
+                                TopAppBarWidget(navController)
+                            }
+                        },
+                        bottomBar = {
+                            if (currentRoute(navController) != "profile" /*||
+                            currentRoute(navController) != "More/{selectedItem}"*/
+                            ) {
+                                BottomNavigationBar(
+                                    items = itemList,
+                                    navController = navController,
+                                    onItemClick = {
+                                        navigateToDestination(navController, it.route)
+                                    }
+                                )
+                            }
+                        }) {
+                        Navigation(navController = navController, paddingValues = it)
+                    }
             }
         }
     }
@@ -75,22 +78,22 @@ class MainActivity : ComponentActivity() {
 fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
     NavHost(
         navController = navController,
-        startDestination = "Home",
+        startDestination = "home",
         Modifier.padding(paddingValues)
     ) {
-        composable(route = "Home") {
+        composable(route = "home") {
             HomeScreen()
         }
-        composable(route = "Chat") {
+        composable(route = "chat") {
             ChatScreen()
         }
-        composable(route = "Setting") {
+        composable(route = "setting") {
             SettingScreen(navController)
         }
-        composable(route = "Profile") {
+        composable(route = "profile") {
             ProfileScreen(navController)
         }
-        composable(route = "More/{selectedItem}") {
+        composable(route = "more/{selectedItem}") {
             val item = it.arguments?.getString("selectedItem").toString()
             MoreSettingScreen(item, navController)
         }
@@ -103,7 +106,7 @@ private fun TopAppBarWidget(navController: NavHostController) {
     TopAppBar(
         title = { Text(text = navBackStackEntry?.destination?.route.toString()/*"TopAppBar Title"*/) },
         navigationIcon = {
-            IconButton(onClick = { navigateToDestination(navController, "Profile") }) {
+            IconButton(onClick = { navController.navigate("Profile")/*navigateToDestination(navController, "Profile")*/ }) {
                 Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile Icon")
             }
         },
