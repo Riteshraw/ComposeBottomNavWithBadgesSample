@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class ChatViewModel : ViewModel() {
+class BenefitViewModel : ViewModel() {
     var valResponse: Int by mutableStateOf(0)
     var listResponse: List<String> by mutableStateOf(listOf())
 

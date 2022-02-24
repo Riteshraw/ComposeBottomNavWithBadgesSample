@@ -8,5 +8,5 @@ sealed class MenuAction(
     @StringRes val label: Int,
     @DrawableRes val icon: Int) {
 
-    object Contact : MenuAction(R.string.menu_item_contact, R.mipmap.icon_contact_48)
+    object Contact : MenuAction(R.string.menu_item_contact, R.drawable.ic_contact_32)
 }

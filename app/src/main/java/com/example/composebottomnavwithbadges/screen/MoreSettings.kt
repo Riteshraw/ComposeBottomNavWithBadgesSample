@@ -9,10 +9,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
 
 @Composable
-fun MoreSettingScreen(item:String,navController: NavHostController) {
+fun MoreSettingScreen(item: String, upPress: () -> Unit) {
     Column(
         Modifier
             .padding(8.dp)
@@ -26,10 +25,11 @@ fun MoreSettingScreen(item:String,navController: NavHostController) {
             text = "Argument received : $item",
             Modifier
                 .weight(1F)
-                .background(Color.Cyan)
+                .background(Color.White)
                 .fillMaxSize()
                 .wrapContentHeight(),
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            color = Color.Black
         )
     }
 }

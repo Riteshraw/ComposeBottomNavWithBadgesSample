@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">ComposeBottomNavWithBadges</string>
     <string name="menu_item_contact">Contact</string>
+    <string name="home_home">Home</string>
+    <string name="home_benefits">Benefits</string>
+    <string name="home_savings">Savings</string>
+    <string name="home_more">More</string>
+    <string name="profile_home">Profile</string>
+    <string name="profile_info">Personal Info</string>
+    <string name="profile_security">Security</string>
+    <string name="profile_notification">Notification</string>
+    <string name="setting_home">More Setting</string>
+    <string name="setting_info">Settings Info</string>
+    <string name="setting_security">Settings Security</string>
+    <string name="setting_notification">Settings Notification</string>
 </resources>

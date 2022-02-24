@@ -13,7 +13,7 @@ import androidx.navigation.NavHostController
 
 
 @Composable
-fun ProfileScreen(navController: NavHostController) {
+fun ProfileScreen(upPress: () -> Unit) {
     Column(
         Modifier
             .padding(8.dp)
@@ -26,7 +26,6 @@ fun ProfileScreen(navController: NavHostController) {
             text = "Welcome",
             Modifier
                 .weight(1F)
-                .background(Color.Cyan)
                 .fillMaxSize()
                 .wrapContentHeight(),
             textAlign = TextAlign.Center
