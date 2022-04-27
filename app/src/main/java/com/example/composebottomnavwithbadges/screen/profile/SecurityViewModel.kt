@@ -1,11 +1,13 @@
-package com.example.composebottomnavwithbadges.screen
+package com.example.composebottomnavwithbadges.screen.profile
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class SettingViewModel: ViewModel() {
+class SecurityViewModel: ViewModel() {
+
     var valResponse:Int by mutableStateOf(0)
     var listResponse:List<String> by mutableStateOf(listOf())
 
@@ -18,6 +20,8 @@ class SettingViewModel: ViewModel() {
     }
 
     private fun getList(){
+        Log.i("Compose", "gettinglist SecurityViewModel")
+
         listResponse = listOf(
             "Android 20",
             "Android 21",
@@ -42,5 +46,10 @@ class SettingViewModel: ViewModel() {
             "Android 39",
             "Android 40"
         )
+    }
+
+    override fun onCleared() {
+        Log.v("Compose","onCleared SecurityViewModel...")
+        super.onCleared()
     }
 }

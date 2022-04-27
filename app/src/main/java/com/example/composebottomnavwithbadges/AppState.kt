@@ -13,6 +13,7 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.composebottomnavwithbadges.dao.User
 
 
 /**
@@ -21,8 +22,15 @@ import androidx.navigation.compose.rememberNavController
 object MainDestinations {
     const val HOME_ROUTE = "home"
     const val HOME_PROFILE = "profile"
-    const val HOME_SETTING = "setting"
+    const val HOME_MORE = "more"
     const val USERID_KEY = "userId"
+}
+
+object SecondaryDestinations {
+    const val HOME_FAB_ROUTE = "homeFab"
+    const val HOME_ITEM_CLICK_PROFILE = "homeItemClick"
+    const val HOME_ARG_ID = "homeArgId"
+    const val MORE_SETTING_ROUTE = "moreSettings"
 }
 
 /**
@@ -48,27 +56,6 @@ class AppState(
     val scaffoldState: ScaffoldState,
     val navController: NavHostController,
 ) {
-    // Process snackbars coming from SnackbarManager
-    init {
-        /*coroutineScope.launch {
-            snackbarManager.messages.collect { currentMessages ->
-                if (currentMessages.isNotEmpty()) {
-                    val message = currentMessages[0]
-                    val text = resources.getText(message.messageId)
-
-                    // Display the snackbar on the screen. `showSnackbar` is a function
-                    // that suspends until the snackbar disappears from the screen
-                    scaffoldState.snackbarHostState.showSnackbar(text.toString())
-                    // Once the snackbar is gone or dismissed, notify the SnackbarManager
-                    snackbarManager.setMessageShown(message.id)
-                }
-            }
-        }*/
-    }
-
-// ----------------------------------------------------------
-// BottomBar state source of truth
-// ----------------------------------------------------------
 
     val bottomBarTabs = HomeSections.values()
     private val bottomBarRoutes = bottomBarTabs.map { it.route }
@@ -78,10 +65,6 @@ class AppState(
     val shouldShowBottomAndTopAppBar: Boolean
         @Composable get() = navController
             .currentBackStackEntryAsState().value?.destination?.route in bottomBarRoutes
-
-// ----------------------------------------------------------
-// Navigation state source of truth
-// ----------------------------------------------------------
 
     val currentRoute: String?
         get() = navController.currentDestination?.route
@@ -107,10 +90,39 @@ class AppState(
         }
     }
 
-    fun navigateToMoreSettings(userId: String, from: NavBackStackEntry) {
+    fun navigateToProfileRoute(route: String, userId: String?) {
+        if (route != currentRoute) {
+            //navController.navigate("$route/$userId") {
+            navController.navigate(route) {
+                //Add this code to remove profile screen when navigating back from profile route
+//                popUpTo(navController.graph.findNode(MainDestinations.HOME_PROFILE)!!.id) {
+//                    saveState = true
+//                }
+                launchSingleTop = true
+                restoreState = false
+            }
+        }
+    }
+
+    fun navigateToMoreRoute(route: String, userId: String?) {
+        if (route != currentRoute) {
+            navController.navigate(route) {
+                /*popUpTo(HomeSections.MORE.route) {
+                    saveState = true
+                }*/
+                launchSingleTop = true
+                restoreState = false
+            }
+        }
+    }
+
+    fun navigateToHomeFab(user: User, from: NavBackStackEntry) {
         // In order to discard duplicated navigation events, we check the Lifecycle
+        val userId = "Test String"
         if (from.lifecycleIsResumed()) {
-            navController.navigate("${MainDestinations.HOME_SETTING}/$userId")
+            //Currently parcelables are not supported by Navigation try for workaround
+            navController.navigate("${SecondaryDestinations.HOME_FAB_ROUTE}/$user")
+            //navController.navigate("${SecondaryDestinations.HOME_FAB_ROUTE}/$userId")
         }
     }
 
@@ -118,6 +130,13 @@ class AppState(
         // In order to discard duplicated navigation events, we check the Lifecycle
         if (from.lifecycleIsResumed()) {
             navController.navigate("${MainDestinations.HOME_PROFILE}")
+        }
+    }
+
+    fun navigateToMoreSettings(userId: String, from: NavBackStackEntry) {
+        // In order to discard duplicated navigation events, we check the Lifecycle
+        if (from.lifecycleIsResumed()) {
+            navController.navigate("${SecondaryDestinations.MORE_SETTING_ROUTE}/$userId")
         }
     }
 

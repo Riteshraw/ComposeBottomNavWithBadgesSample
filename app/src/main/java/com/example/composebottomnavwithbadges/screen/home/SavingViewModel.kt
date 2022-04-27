@@ -1,12 +1,12 @@
-package com.example.composebottomnavwithbadges.screen
+package com.example.composebottomnavwithbadges.screen.home
 
-import androidx.compose.foundation.lazy.LazyListState
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 
-class BenefitViewModel : ViewModel() {
+class SavingViewModel : ViewModel() {
     var valResponse: Int by mutableStateOf(0)
     var listResponse: List<String> by mutableStateOf(listOf())
 
@@ -33,6 +33,8 @@ class BenefitViewModel : ViewModel() {
     }
 
     fun getList() {
+        Log.i("Compose", "gettinglist SavingViewModel")
+
         listResponse = listOf(
             "Android 20",
             "Android 21",
@@ -57,5 +59,10 @@ class BenefitViewModel : ViewModel() {
             "Android 39",
             "Android 40"
         )
+    }
+
+    override fun onCleared() {
+        Log.v("Compose","onCleared SavingViewModel...")
+        super.onCleared()
     }
 }

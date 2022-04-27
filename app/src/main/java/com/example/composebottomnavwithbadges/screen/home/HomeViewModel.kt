@@ -1,4 +1,4 @@
-package com.example.composebottomnavwithbadges.screen
+package com.example.composebottomnavwithbadges.screen.home
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -19,7 +19,7 @@ class HomeViewModel: ViewModel() {
     }
 
     fun getList(){
-        Log.i("Compose","gettinglist")
+        Log.i("Compose","gettinglist HomeViewMOdel")
         listResponse = listOf(
             "Android 20",
             "Android 21",
@@ -44,5 +44,12 @@ class HomeViewModel: ViewModel() {
             "Android 39",
             "Android 40"
         )
+
+
+    }
+
+    override fun onCleared() {
+        Log.v("Compose","onCleared HomeViewViewModel...")
+        super.onCleared()
     }
 }

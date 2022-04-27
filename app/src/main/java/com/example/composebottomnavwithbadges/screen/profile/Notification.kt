@@ -1,4 +1,4 @@
-package com.example.composebottomnavwithbadges.screen
+package com.example.composebottomnavwithbadges.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -9,9 +9,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
+
 
 @Composable
-fun MoreSettingScreen(item: String, upPress: () -> Unit) {
+fun NotificationScreen(/*upPress: () -> Unit*/) {
     Column(
         Modifier
             .padding(8.dp)
@@ -19,17 +21,14 @@ fun MoreSettingScreen(item: String, upPress: () -> Unit) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "More Setting Screen")
-        //display argument text
+        Text(text = "Notification Screen")
         Text(
-            text = "Argument received : $item",
+            text = "Welcome",
             Modifier
                 .weight(1F)
-                .background(Color.White)
                 .fillMaxSize()
                 .wrapContentHeight(),
-            textAlign = TextAlign.Center,
-            color = Color.Black
+            textAlign = TextAlign.Center
         )
     }
 }

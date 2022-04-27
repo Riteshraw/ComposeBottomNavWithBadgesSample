@@ -2,12 +2,11 @@ package com.example.composebottomnavwithbadges
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.ShoppingCart
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
@@ -27,35 +26,79 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.composebottomnavwithbadges.screen.BenefitScreen
-import com.example.composebottomnavwithbadges.screen.HomeScreen
-import com.example.composebottomnavwithbadges.screen.SettingScreen
+import com.example.composebottomnavwithbadges.dao.User
+import com.example.composebottomnavwithbadges.screen.home.*
+import com.example.composebottomnavwithbadges.screen.more.MoreSetting1Screen
+import com.example.composebottomnavwithbadges.screen.more.MoreSettingScreen
 
 fun NavGraphBuilder.addHomeGraph(
-    navController: NavHostController,
     onSnackSelected: (String, NavBackStackEntry) -> Unit,
+    onFabSelected: (User, NavBackStackEntry) -> Unit,
+    onMoreRouteSelected: (String,String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     composable(HomeSections.HOME.route) { from ->
-        HomeScreen()
+        HomeScreen(onFabClick = { user -> onFabSelected(user, from) })
     }
     composable(HomeSections.BENEFITS.route) { from ->
         BenefitScreen()
     }
     composable(HomeSections.SAVINGS.route) { from ->
-        BenefitScreen()
+        SavingScreen()
     }
     composable(HomeSections.MORE.route) { from ->
-        SettingScreen(onItemClick = { id -> onSnackSelected(id, from) })
+        MoreScreen(
+            onItemClick = { id -> onSnackSelected(id, from) },
+            onRouteSelected = { route, args -> onMoreRouteSelected(route, args) }
+        )
     }
+}
 
-    /*composable(ProfileSection.Home.route) {
-        ProfileScreen(navController)
+fun NavGraphBuilder.addProfileGraph(
+    onProfileItemSelected: (String, String?) -> Unit,
+    arguments: String,
+    upPress: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    composable(ProfileSections.HOME.route) { from ->
+        ProfileScreen(
+            onRouteSelected = { route -> onProfileItemSelected(route, arguments) },
+            arguments,
+            upPress
+        )
     }
-    composable(SettingSection.Home.route"more/{selectedItem}") {
-        val item = it.arguments?.getString("selectedItem").toString()
-        MoreSettingScreen(item, navController)
+    composable(ProfileSections.PERSONALINFO.route) { from ->
+        PersonalInfoScreen()
+    }
+    composable(ProfileSections.NOTIFICATION.route) { from ->
+        NotificationScreen()
+    }
+    composable(ProfileSections.SECURITY.route) { from ->
+        SecurityScreen()
+    }
+}
+
+fun NavGraphBuilder.addMoreGraph(
+    onMoreRouteSelected: (String, String?) -> Unit,
+    arguments: String,
+    upPress: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    /*composable(HomeSections.MORE.route) { from ->
+        MoreScreen(
+            onRouteSelected = { route, args -> onMoreRouteSelected(route, args) },
+            onItemClick = { }
+        )
     }*/
+    composable(MoreSections.PERSONALINFO.route) { from ->
+        MoreSettingScreen(arguments, upPress)
+    }
+    composable(MoreSections.SECURITY.route) { from ->
+        MoreSetting1Screen(arguments, upPress)
+    }
+    composable(MoreSections.NOTIFICATION.route) { from ->
+        MoreSetting1Screen(arguments, upPress)
+    }
 }
 
 enum class HomeSections(
@@ -66,12 +109,7 @@ enum class HomeSections(
 ) {
     HOME(R.string.home_home, Icons.Filled.Home, Icons.Outlined.Home, "home/home"),
     BENEFITS(R.string.home_benefits, Icons.Filled.Search, Icons.Outlined.Search, "home/benefits"),
-    SAVINGS(
-        R.string.home_savings,
-        Icons.Filled.ShoppingCart,
-        Icons.Outlined.ShoppingCart,
-        "home/savings"
-    ),
+    SAVINGS(R.string.home_savings,Icons.Filled.ShoppingCart, Icons.Outlined.ShoppingCart,"home/savings"),
     MORE(R.string.home_more, Icons.Filled.AccountCircle, Icons.Outlined.AccountCircle, "home/more")
 }
 
@@ -79,20 +117,20 @@ enum class ProfileSections(
     @StringRes val title: Int,
     val route: String
 ) {
-    Home(R.string.profile_home, "profile/home"),
-    PersonalInfo(R.string.profile_info, "profile/info"),
-    Security(R.string.profile_security, "profile/security"),
-    Notification(R.string.profile_notification, "profile/notification")
+    HOME(R.string.profile_home, "profile/home"),
+    PERSONALINFO(R.string.profile_info, "profile/info"),
+    SECURITY(R.string.profile_security, "profile/security"),
+    NOTIFICATION(R.string.profile_notification, "profile/notification")
 }
 
-enum class SettingSections(
+enum class MoreSections(
     @StringRes val title: Int,
     val route: String
 ) {
-    Home(R.string.setting_home, "setting/home"),
-    PersonalInfo(R.string.setting_info, "setting/info"),
-    Security(R.string.setting_security, "setting/security"),
-    Notification(R.string.setting_notification, "setting/notification")
+    HOME(R.string.setting_home, "more/home"),
+    PERSONALINFO(R.string.setting_info, "more/info"),
+    SECURITY(R.string.setting_security, "more/security"),
+    NOTIFICATION(R.string.setting_notification, "more/notification")
 }
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -105,9 +143,6 @@ fun BottomNavigationBar(
     navigateToRoute: (String) -> Unit
 ) {
     val backStackEntry = navController.currentBackStackEntryAsState()
-
-    val routes = remember { tabs.map { it.route } }
-    val currentSection = tabs.first { it.route == currentRoute }
 
     BottomNavigation(
         modifier = modifier,
@@ -152,5 +187,21 @@ fun BottomNavigationBar(
                 }
             )
         }
+    }
+}
+
+@Composable
+fun Up(upPress: () -> Unit) {
+    IconButton(
+        onClick = upPress,
+        modifier = Modifier
+            .padding(horizontal = 0.dp, vertical = 0.dp)
+            .size(24.dp)
+
+    ) {
+        Icon(
+            imageVector = Icons.Filled.ArrowBack,
+            contentDescription = "Back Navigation"
+        )
     }
 }

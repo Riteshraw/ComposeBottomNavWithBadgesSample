@@ -1,4 +1,4 @@
-package com.example.composebottomnavwithbadges.screen
+package com.example.composebottomnavwithbadges.screen.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,15 +12,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun BenefitScreen(
-    viewModel: BenefitViewModel = viewModel()
+fun SavingScreen(
+    viewModel: SavingViewModel = viewModel()
 ) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "BenefitScreen")
+        Text(text = "SavingScreen")
         /*var listState: LazyListState =
             if (!viewModel.isListStateInitialised()) {
                 rememberLazyListState()

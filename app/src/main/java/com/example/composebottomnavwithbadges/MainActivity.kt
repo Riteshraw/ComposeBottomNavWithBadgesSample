@@ -18,8 +18,9 @@ import androidx.navigation.*
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.composebottomnavwithbadges.screen.MoreSettingScreen
-import com.example.composebottomnavwithbadges.screen.ProfileScreen
+import com.example.composebottomnavwithbadges.dao.User
+import com.example.composebottomnavwithbadges.screen.home.HomeFabScreen
+import com.example.composebottomnavwithbadges.screen.more.MoreSettingScreen
 import com.example.composebottomnavwithbadges.ui.theme.ComposeBottomNavWithBadgesTheme
 import com.example.composebottomnavwithbadges.utils.MenuAction
 
@@ -28,12 +29,19 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             ComposeBottomNavWithBadgesTheme {
-                //val navController = rememberNavController()
                 val appState = rememberAppState()
                 Scaffold(
                     topBar = {
                         if (appState.shouldShowBottomAndTopAppBar) {
-                            TopAppBarWidget(appState)
+                            TopAppBarWidget(
+                                appState,
+                                navigateToRoute = { route, userId ->
+                                    appState.navigateToProfileRoute(
+                                        route,
+                                        userId
+                                    )
+                                }
+                            )
                         }
                     },
                     bottomBar = {
@@ -52,8 +60,10 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPaddingModifier)
                     ) {
                         navGraph(
-                            appState.navController,
-                            onSnackSelected = appState::navigateToMoreSettings,
+                            onProfileItemSelected = appState::navigateToProfileRoute,
+                            onItemSelected = appState::navigateToMoreSettings,
+                            onMoreRouteSelected = appState::navigateToMoreRoute,
+                            onFabSelected = appState::navigateToHomeFab,
                             upPress = appState::upPress
                         )
                     }
@@ -61,74 +71,70 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
 }
 
 private fun NavGraphBuilder.navGraph(
-    navController: NavHostController,
-    onSnackSelected: (String, NavBackStackEntry) -> Unit,
+    onProfileItemSelected: (String, String?) -> Unit,
+    onMoreRouteSelected: (String, String?) -> Unit,
+    onItemSelected: (String, NavBackStackEntry) -> Unit,
+    onFabSelected: (User, NavBackStackEntry) -> Unit,
     upPress: () -> Unit
 ) {
     navigation(
         route = MainDestinations.HOME_ROUTE,
         startDestination = HomeSections.HOME.route
     ) {
-        addHomeGraph(navController, onSnackSelected)
+        addHomeGraph(onItemSelected, onFabSelected, onMoreRouteSelected)
+    }
+    navigation(
+        route = MainDestinations.HOME_PROFILE,
+        startDestination = ProfileSections.HOME.route
+    ) {
+        addProfileGraph(
+            onProfileItemSelected, "Test_user", upPress
+        )
+    }
+    navigation(
+        route = MainDestinations.HOME_MORE,
+        startDestination = MoreSections.PERSONALINFO.route
+    ) {
+        addMoreGraph(
+            onMoreRouteSelected, "Test_user", upPress
+        )
     }
     composable(
-        "${MainDestinations.HOME_SETTING}/{${MainDestinations.USERID_KEY}}",
+        "${SecondaryDestinations.MORE_SETTING_ROUTE}/{${MainDestinations.USERID_KEY}}",
         arguments = listOf(navArgument(MainDestinations.USERID_KEY) { type = NavType.StringType })
     ) { backStackEntry ->
         val arguments = requireNotNull(backStackEntry.arguments)
         val userId = arguments.getString(MainDestinations.USERID_KEY)
-        MoreSettingScreen(userId!!, upPress)
+        MoreSettingScreen(
+            userId!!,
+            upPress
+        )
     }
     composable(
-        "${MainDestinations.HOME_PROFILE}"
-        //arguments = listOf(navArgument(MainDestinations.USERID_KEY) { type = NavType.StringType })
+        "${SecondaryDestinations.HOME_FAB_ROUTE}/{${SecondaryDestinations.HOME_ARG_ID}}",
+        //arguments = listOf(navArgument(SecondaryDestinations.HOME_ARG_ID) { type = NavType.StringType }
+        arguments = listOf(navArgument(SecondaryDestinations.HOME_ARG_ID) {
+            type = NavType.ParcelableType(User::class.java)
+            defaultValue = User()
+        }
+        )
     ) { backStackEntry ->
         val arguments = requireNotNull(backStackEntry.arguments)
-        val userId = arguments.getString(MainDestinations.USERID_KEY)
-        ProfileScreen(/*userId!!,*/ upPress)
+        val argsId = arguments.getParcelable<User>(SecondaryDestinations.HOME_ARG_ID)
+        HomeFabScreen(argsId!!, upPress)
     }
 }
 
-
-/*
 @Composable
-fun Navigation(navController: NavHostController, paddingValues: PaddingValues) {
-    NavHost(
-        navController = navController,
-        startDestination = "home",
-        Modifier.padding(paddingValues)
-    ) {
-        composable(route = "home") {
-            HomeScreen()
-        }
-        composable(route = "chat") {
-            BenefitScreen()
-        }
-        composable(route = "setting") {
-            SettingScreen(navController)
-        }
-        composable(route = "profile") {
-            ProfileScreen(navController)
-        }
-        composable(route = "more/{selectedItem}") {
-            val item = it.arguments?.getString("selectedItem").toString()
-            MoreSettingScreen(item, navController)
-        }
-    }
-}
-*/
-
-@Composable
-private fun TopAppBarWidget(appState: AppState) {
+private fun TopAppBarWidget(appState: AppState, navigateToRoute: (String, String) -> Unit) {
     val navBackStackEntry by appState.navController.currentBackStackEntryAsState()
     TopAppBar(
         title = { Text(text = navBackStackEntry?.destination?.route.toString()/*"TopAppBar Title"*/) },
         navigationIcon = {
-            IconButton(onClick = { appState.navigateToProfile(navBackStackEntry!!)/*navigateToDestination(navController, "Profile")*/ }) {
+            IconButton(onClick = { navigateToRoute(MainDestinations.HOME_PROFILE, "Test_User2") }) {
                 Icon(imageVector = Icons.Filled.Person, contentDescription = "Profile Icon")
             }
         },
@@ -136,7 +142,7 @@ private fun TopAppBarWidget(appState: AppState) {
         contentColor = Color.White,
         elevation = 12.dp,
         actions = {
-            IconButton(onClick = { appState.navigateToProfile(navBackStackEntry!!)}) {
+            IconButton(onClick = { appState.navigateToProfile(navBackStackEntry!!) }) {
                 Icon(
                     painter = painterResource(id = MenuAction.Contact.icon),
                     contentDescription = MenuAction.Contact.label.toString()
@@ -144,10 +150,4 @@ private fun TopAppBarWidget(appState: AppState) {
             }
         }
     )
-}
-
-@Composable
-fun currentRoute(navController: NavHostController): String? {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    return navBackStackEntry?.destination?.route
 }
